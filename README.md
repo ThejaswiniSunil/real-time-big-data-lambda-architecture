@@ -1,9 +1,9 @@
 # Real-Time Big Data & Smartphone Price Prediction Platform
 
-### Distributed Streaming, Batch Processing & Machine Learning Using Lambda Architecture
+### Distributed Streaming, Batch Processing & Machine Learning with Lambda Architecture
 
 <p align="center">
-  <img src="images/architecture.png" alt="Big Data Lambda Architecture" width="100%"/>
+  <img src="images/architecture.jpeg" alt="End-to-End Big Data Lambda Architecture" width="100%"/>
 </p>
 
 <p align="center">
@@ -28,25 +28,25 @@ The platform simulates a continuous stream of smartphone product records, proces
 - **Speed Layer:** Performs low-latency machine learning inference and stores predictions in Apache HBase for real-time retrieval.
 - **Batch Layer:** Persists incoming records in Hadoop HDFS, processes accumulated data using Apache Spark, performs batch inference using a pretrained XGBoost model, and stores analytical results in PostgreSQL.
 
-The platform provides a real-time prediction interface and an analytical dashboard for exploring smartphone prices, manufacturers, hardware specifications, and predicted market segments.
+The system exposes predictions through a real-time web application and provides analytical visualizations for exploring smartphone prices, manufacturers, hardware specifications, and predicted market segments.
 
 The primary engineering focus is the integration of distributed technologies into a unified data processing ecosystem.
 
 ## Project Demonstration
 
-### 1. Analytical Dashboard
+### 1. Analytics Dashboard
 
-The analytical dashboard provides an overview of accumulated smartphone predictions and their distribution across different product attributes.
+The analytical dashboard provides an overview of accumulated smartphone predictions and their distribution across manufacturers and hardware specifications.
 
 <p align="center">
-  <img src="images/dashboard_phone.png" alt="Smartphone Price Analytics Dashboard" width="100%"/>
+  <img src="images/dashboard_phone.jpeg" alt="Smartphone Price Analytics Dashboard - Overview" width="100%"/>
 </p>
 
 <p align="center">
-  <img src="images/dashboard_phone-2.png" alt="Detailed Smartphone Analytics Dashboard" width="100%"/>
+  <img src="images/dashboard_phone-2.jpeg" alt="Smartphone Price Analytics Dashboard - Detailed Analytics" width="100%"/>
 </p>
 
-The dashboard includes:
+**Dashboard insights include:**
 
 - Total processed smartphone records.
 - Average and maximum predicted prices.
@@ -58,24 +58,24 @@ The dashboard includes:
 
 ### 2. Real-Time Machine Learning Prediction
 
-The speed layer processes incoming smartphone events and generates predictions immediately using the pretrained XGBoost model.
+The speed layer processes incoming smartphone events and generates predictions using the pretrained XGBoost regression model.
 
 <p align="center">
-  <img src="images/real-time.gif" alt="Real-Time Smartphone Price Prediction Demonstration" width="100%"/>
+  <img src="images/real-time.gif" alt="Live Smartphone Price Prediction - Animated Demonstration" width="100%"/>
 </p>
 
-Each incoming record is processed independently, and the latest prediction is stored in HBase before being displayed through the Flask application.
+Each incoming record is processed independently. The predicted price is stored in HBase and retrieved by the Flask application for real-time presentation.
 
-### 3. Application Execution
+### 3. Application Execution & Interfaces
 
-The following screenshots demonstrate the application execution environment and prediction interfaces.
+The following screenshots demonstrate the application execution environment and additional prediction interface.
 
 <p align="center">
-  <img src="images/run_web_app.png" alt="Running the Real-Time Web Application" width="100%"/>
+  <img src="images/run_web_app.jpeg" alt="Running the Real-Time Web Application" width="100%"/>
 </p>
 
 <p align="center">
-  <img src="images/spring_boot_web_app.png" alt="Additional Smartphone Prediction Interface" width="100%"/>
+  <img src="images/spring_boot_web_app.jpeg" alt="Additional Smartphone Prediction Interface" width="100%"/>
 </p>
 
 ---
@@ -113,7 +113,7 @@ flowchart TB
     style E fill:#e4f4e8,stroke:#34834b,color:#111
 ```
 
-### Data Flow
+### Architecture Components
 
 **1. Data Ingestion – Python Producer**
 
@@ -121,7 +121,7 @@ A Python producer reads smartphone records from the source dataset and simulates
 
 **2. Event Streaming – Apache Kafka**
 
-Kafka acts as the central messaging platform.
+Apache Kafka acts as the central messaging platform.
 
 Every incoming smartphone record is published to the `smartphoneTopic` topic. Two independent consumer groups subscribe to the same topic, allowing the speed and batch layers to process every event independently.
 
@@ -149,7 +149,7 @@ Every 60 seconds, the batch-processing job:
 - Filters records with missing required features.
 - Encodes categorical attributes.
 - Prepares model-compatible feature vectors.
-- Applies the pretrained XGBoost model to generate predictions.
+- Applies the pretrained XGBoost model to generate batch predictions.
 - Writes the analytical results into PostgreSQL.
 
 **5. Analytical Serving**
@@ -163,7 +163,7 @@ PostgreSQL stores the batch prediction results in a structured `Phone` table, wh
 | Category | Technology | Purpose |
 |---|---|---|
 | Programming Language | Python 3.10 | Pipeline development |
-| Message Streaming | Apache Kafka | Distributed event ingestion |
+| Message Streaming | Apache Kafka 7.4.0 | Distributed event ingestion |
 | Kafka Coordination | ZooKeeper | Kafka broker coordination |
 | Stream Processing | Python Kafka Consumers | Real-time event processing |
 | Distributed Storage | Hadoop HDFS 3.2.1 | Raw data storage |
@@ -201,7 +201,7 @@ The producer randomly selects records from this dataset to simulate incoming sma
 
 ### XGBoost Regression Model
 
-A pretrained XGBoost regression model predicts smartphone prices using six input features:
+A pretrained XGBoost regression model predicts smartphone prices using six input features.
 
 | Feature | Description |
 |---|---|
@@ -223,17 +223,20 @@ The model performs inference only; incoming records do not automatically retrain
 ## Data Engineering Implementation
 
 ### Event-Driven Ingestion
+
 - Continuous event generation using Python.
 - Kafka-based message publishing.
 - Independent consumer groups.
 - Decoupled ingestion and downstream processing.
 
 ### Distributed Storage
+
 - Hadoop HDFS for raw incoming records.
 - Apache HBase for low-latency prediction retrieval.
 - PostgreSQL for structured analytical results.
 
 ### Data Transformation
+
 - Numerical type conversion.
 - Missing-value filtering.
 - Categorical feature encoding.
@@ -241,6 +244,7 @@ The model performs inference only; incoming records do not automatically retrain
 - Batch processing of accumulated records.
 
 ### Pipeline Orchestration
+
 - Docker Compose-based infrastructure.
 - Independent application services.
 - Automated batch execution at configurable intervals.
@@ -252,15 +256,15 @@ The model performs inference only; incoming records do not automatically retrain
 ## Repository Structure
 
 ```text
-big-data-lambda-smartphone-prices/
+real-time-big-data-lambda-architecture/
 │
 ├── images/
-│   ├── architecture.png
-│   ├── dashboard_phone.png
-│   ├── dashboard_phone-2.png
+│   ├── architecture.jpeg
+│   ├── dashboard_phone.jpeg
+│   ├── dashboard_phone-2.jpeg
 │   ├── real-time.gif
-│   ├── run_web_app.png
-│   └── spring_boot_web_app.png
+│   ├── run_web_app.jpeg
+│   └── spring_boot_web_app.jpeg
 │
 ├── Main/
 │   └── Lambda/
@@ -295,7 +299,7 @@ big-data-lambda-smartphone-prices/
 └── README.md
 ```
 
-*The smartphone dataset, pretrained model, and Flask template are runtime assets and should also be included in the repository or documented separately.*
+*The dataset, pretrained model, and Flask HTML template are runtime assets and should also be included in the repository or documented separately. The structure above summarizes the main application components.*
 
 ---
 
@@ -311,9 +315,9 @@ big-data-lambda-smartphone-prices/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/big-data-lambda-smartphone-prices.git
+git clone https://github.com/ThejaswiniSunil/real-time-big-data-lambda-architecture.git
 
-cd big-data-lambda-smartphone-prices
+cd real-time-big-data-lambda-architecture
 ```
 
 ### 2. Prepare Runtime Assets
@@ -375,6 +379,8 @@ docker compose down -v
 | PostgreSQL | localhost:5433 | Batch prediction database |
 | Grafana | localhost:3000 | Analytical dashboard, when separately configured |
 
+**Note:** Grafana is part of the documented analytical visualization workflow, but it requires its own service and dashboard configuration; it is not included in the supplied Docker Compose configuration.
+
 ---
 
 ## Engineering Considerations & Future Improvements
@@ -391,7 +397,7 @@ docker compose down -v
 | Database | Introduce incremental and upsert-based writes |
 | Monitoring | Integrate Grafana and Prometheus |
 | Reliability | Implement retries, dead-letter queues, and idempotency |
-| Data Governance | Add schema enforcement and lineage tracking |
+| Data Governance | Add schema enforcement and data lineage |
 
 ---
 
