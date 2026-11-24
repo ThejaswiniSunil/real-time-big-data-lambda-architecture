@@ -1,424 +1,423 @@
-# Smartphone Price Prediction in Big Data Environment
+# Real-Time Big Data & Smartphone Price Prediction Platform
 
-## Table of Contents
-1. [Project Overview](#1-project-overview)
-2. [Technologies Used](#2-technologies-used)
-3. [Architecture](#3-architecture)
-4. [Repository Structure](#4-repository-structure)
-5. [Software Requirements for Running the Project](#5-software-requirements-for-running-the-project)
-6. [How to Run](#6-how-to-run)
-7. [Dashboards](#7-dashboards)
-8. [Acknowledgments](#8-acknowledgments)
-9. [Conclusion](#9-conclusion)
-10. [Contacts](#10-contacts)
+### Distributed Streaming, Batch Processing & Machine Learning Using Lambda Architecture
 
-## 1. Project Overview
-This project aims to predict smartphone prices using a combination of batch and stream processing techniques in a Big Data environment. The architecture follows the Lambda Architecture pattern, providing both real-time and batch processing capabilities to users.
+<p align="center">
+  <img src="images/architecture.png" alt="Big Data Lambda Architecture" width="100%"/>
+</p>
 
-## 2. Technologies Used
-* **Ingestion Layer:** Apache Kafka (message broker)
-* **Stream Layer:** XGBoost (machine learning model), Apache HBase (real-time View)
-* **Batch Layer:** Apache Spark (data processing framework), Apache Airflow (workflow orchestration), PostgreSQL (data warehouse (Batch View))
-* **Visualization:** Spring Boot (web application framework), Power BI (interactive dashboards)
-
-
-## 3. Architecture
-
-- Here is the architecture :
- ![architecture](images/architecture.png)
-
-
-The project architecture consists of five main layers: the ingestion layer, the batch layer, the stream layer, the serving layer and the visualization layer.
-
-### Ingestion Layer
-- **Apache Kafka**: Utilized for real-time data ingestion from an API providing smartphone data.
-   - **Consumer**: Collects data from the API and feeds it into the stream and batch layer.
-
-### Stream Layer
-- **Producer**: A machine learning model developed using XGBoost to estimate smartphone prices. This model runs in real-time and stores predictions in a realtime view. (details about the model <a href="https://github.com/aymane-maghouti/Sentiment-Analysis-for-Jumia-Reviews-and-Smartphone-Price-Prediction-System" target="_blank">here</a> )
-
-### Batch Layer
-- **HDFS**: Data from the API is stored in HDFS as part of the data lake solution.
- - **PySpark**: Performs data transformation on stored data using PySpark.
- - **Apache Airflow**: Orchestrates the batch processing workflow.
-### Serving Layer
-- **Realtime View**: Implemented using HBase to provide real-time access to predicted smartphone prices.
-- **Batch View**: Transformed data is stored in PostgreSQL, as the data warehouse solution.
-### Visualization Layer
-- **Spring Boot Web Application**: Provides a user interface to view real-time smartphone prices.
-- **Power BI Dashboard**: Provides batch users with a visualization of processed data.
-
-
-## 4. Repository Structure
-The repository is organized as follows:
-```batch 
-Big-Data-Project:.
-|   README.md
-|
-+---images
-|       architecture.png
-|       dashboard_phone.png
-|       run_web_app.png
-|       spring_boot_web_app.png
-|
-\---Main
-    |   commands.sh
-    |   Dashboard.pbix
-    |
-    +---.idea
-    |       workspace.xml
-    |
-    +---Lambda
-    |   |   docker-compose.yaml
-    |   |   producer.py
-    |   |   transform.py
-    |   |
-    |   +---.idea
-    |   |   |   .gitignore
-    |   |   |   .name
-    |   |   |   misc.xml
-    |   |   |   modules.xml
-    |   |   |   price prediction (big data envirnment).iml
-    |   |   |   vcs.xml
-    |   |   |   workspace.xml
-    |   |   |
-    |   |   \---inspectionProfiles
-    |   |           profiles_settings.xml
-    |   |
-    |   +---Batch_layer
-    |   |   |   batch_layer.py
-    |   |   |   batch_pipeline.py
-    |   |   |   HDFS_consumer.py
-    |   |   |   put_data_hdfs.py
-    |   |   |   save_data_postgresql.py
-    |   |   |   spark_tranformation.py
-    |   |   |   __init__.py
-    |   |   |
-    |   |   +---dags
-    |   |   |       syc_with_Airflow.py
-    |   |   |       __init__.py
-    |   |   |
-    |   |   \---__pycache__
-    |   |           batch_layer.cpython-310.pyc
-    |   |           HDFS_consumer.cpython-310.pyc
-    |   |           put_data_hdfs.cpython-310.pyc
-    |   |           save_data_postgresql.cpython-310.pyc
-    |   |           spark_tranformation.cpython-310.pyc
-    |   |           __init__.cpython-310.pyc
-    |   |
-    |   +---ML_operations
-    |   |   |   xgb_model.pkl
-    |   |   |
-    |   |   \---__pycache__
-    |   +---real_time_web_app(Flask)
-    |   |   |   app.py
-    |   |   |   get_Data_from_hbase.py
-    |   |   |
-    |   |   +---static
-    |   |   |   +---css
-    |   |   |   |       style.css
-    |   |   |   |
-    |   |   |   \---js
-    |   |   |           script.js
-    |   |   |
-    |   |   +---templates
-    |   |   |       index.html
-    |   |   |
-    |   |   \---__pycache__
-    |   |           get_Data_from_hbase.cpython-310.pyc
-    |   |
-    |   +---Stream_data
-    |   |   |   stream_data.csv
-    |   |   |   stream_data.py
-    |   |   |
-    |   |   \---__pycache__
-    |   +---Stream_layer
-    |   |       insert_data_hbase.py
-    |   |       ML_consumer.py
-    |   |       stream_pipeline.py
-    |   |       __init__.py
-    |   |
-    |   \---__pycache__
-    |           producer.cpython-310.pyc
-    |           transform.cpython-310.pyc
-    |
-    \---real_time_app(Spring boot)
-        |   .classpath
-        |   .gitignore
-        |   .project
-        |   HELP.md
-        |   mvnw
-        |   mvnw.cmd
-        |   pom.xml
-        |
-        +---.mvn
-        |   \---wrapper
-        |           maven-wrapper.jar
-        |           maven-wrapper.properties
-        |
-        +---.settings
-        |       org.eclipse.core.resources.prefs
-        |       org.eclipse.jdt.core.prefs
-        |       org.eclipse.m2e.core.prefs
-        |
-        +---src
-        |   +---main
-        |   |   +---java
-        |   |   |   \---com
-        |   |   |       \---example
-        |   |   |           \---demo
-        |   |   |               |   RealTimeAppApplication.java
-        |   |   |               |
-        |   |   |               +---controller
-        |   |   |               |       IndexController.java
-        |   |   |               |
-        |   |   |               \---service
-        |   |   |                       HbaseService.java
-        |   |   |
-        |   |   \---resources
-        |   |       |   application.properties
-        |   |       |
-        |   |       +---static
-        |   |       |   +---css
-        |   |       |   |       style.css
-        |   |       |   |
-        |   |       |   \---js
-        |   |       |           script.js
-        |   |       |
-        |   |       \---templates
-        |   |               index.html
-        |   |
-        |   \---test
-        |       \---java
-        |           \---com
-        |               \---example
-        |                   \---demo
-        |                           RealTimeAppApplicationTests.java
-        |
-        \---target
-            +---classes
-            |   |   application.properties
-            |   |
-            |   +---com
-            |   |   \---example
-            |   |       \---demo
-            |   |           |   RealTimeAppApplication.class
-            |   |           |
-            |   |           +---controller
-            |   |           |       IndexController.class
-            |   |           |
-            |   |           \---service
-            |   |                   HbaseService.class
-            |   |
-            |   +---META-INF
-            |   |   |   MANIFEST.MF
-            |   |   |
-            |   |   \---maven
-            |   |       \---com.example
-            |   |           \---real_time_app
-            |   |                   pom.properties
-            |   |                   pom.xml
-            |   |
-            |   +---static
-            |   |   +---css
-            |   |   |       style.css
-            |   |   |
-            |   |   \---js
-            |   |           script.js
-            |   |
-            |   \---templates
-            |           index.html
-            |
-            \---test-classes
-                \---com
-                    \---example
-                        \---demo
-                                RealTimeAppApplicationTests.class
-
-
-```
-
-## 5. Software Requirements for Running the Project
-
-This project requires the following software to be installed and configured on your system:
-
-**Big Data Stack:**
-
-* **Apache Kafka (version 2.6.0)**
-* **Apache HBase (version 1.2.6)** 
-* **Apache Hadoop (version 2.7.0)** 
-* **Apache Spark (version 3.3.4)** 
-* **PostgreSQL database**
-
-**Programming Languages and Frameworks:**
-
-* **Python (version 3.10.x or later)** 
-* **Java 17 (or compatible version)** 
-* **Spring Boot** 
-
-**Machine Learning Library:**
-
-* **XGBoost** 
-
-**Additional Tools:**
-
-* **Apache Airflow** 
-* **Power BI Desktop** 
-
-
-By installing and configuring these tools, you will have the necessary environment to run this project and leverage its real-time and batch processing capabilities for smartphone price prediction and analysis.
-
-## 6. How to Run
-To set up and run the project locally, follow these steps:
-
-  - Clone the repository:
-   ```bash
-   git clone https://github.com/aymane-maghouti/Big-Data-Project
-   ```
-
-
-#### **1. Stream Layer**
-   - Start Apache zookeeper
-
-   ```batch 
-zookeeper-server-start.bat C:/kafka_2.13_2.6.0/config/zookeeper.properties
-```
-   - Start Kafka server
-
-   ```batch 
-kafka-server-start.bat C:/kafka_2.13_2.6.0/config/server.properties
-```
-   - Create Kafka topic
-
-   ```batch 
-kafka-topics.bat --create --topic smartphoneTopic --bootstrap-server localhost:9092
-```
-
-  - Run the kafka producer
-
-   ```batch 
-kafka-console-producer.bat --topic smartphoneTopic --bootstrap-server localhost:9092
-```
-
-  - Run the kafka consumer
-
-   ```batch 
-kafka-console-consumer.bat --topic smartphoneTopic --from-beginning --bootstrap-server localhost:9092
-```
-
-  - Start HDFS and yarn (start-all or start-dfs and start-yarn)
-
-   ```batch 
-start-all  
-```
-   - Start Hbase
-   ```batch 
-start-hbase  
-```
-   - Run thrift server (for Hbase)
-   ```batch 
-hbase thrift start
-```
-
-after all this run `stream_pipeline.py` script.
-
-and then open the spring boot appliation in your idea and run  it (you can access to the web app locally on  `localhost:8081/`)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache_Kafka-7.4.0-231F20?logo=apachekafka&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache_Spark-3.3.4-E25A1C?logo=apachespark&logoColor=white" />
+  <img src="https://img.shields.io/badge/Apache_Hadoop-3.2.1-66CCFF?logo=apachehadoop&logoColor=black" />
+  <img src="https://img.shields.io/badge/Apache_HBase-1.3-FCC624?logo=apache&logoColor=black" />
+  <img src="https://img.shields.io/badge/XGBoost-2.x-EC6B23" />
+  <img src="https://img.shields.io/badge/PostgreSQL-13-4169E1?logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" />
+</p>
 
 ---
 
-![spring_boot](images/run_web_app.png)
+## Overview
 
+An end-to-end Big Data and Machine Learning platform implementing **Lambda Architecture** to demonstrate distributed data ingestion, real-time stream processing, batch analytics, and machine learning inference.
 
-note that there is another version of the web app developed using Flask micro-framework(watch the demo video for mor details)
+The platform simulates a continuous stream of smartphone product records, processes incoming events through Apache Kafka, and distributes them across two independent processing pipelines:
 
-#### **2. Batch Layer**
-   - Start the Apache Airflow instance: 
+- **Speed Layer:** Performs low-latency machine learning inference and stores predictions in Apache HBase for real-time retrieval.
+- **Batch Layer:** Persists incoming records in Hadoop HDFS, processes accumulated data using Apache Spark, performs batch inference using a pretrained XGBoost model, and stores analytical results in PostgreSQL.
 
-   ```batch 
-docker-compose up -d
+The platform provides a real-time prediction interface and an analytical dashboard for exploring smartphone prices, manufacturers, hardware specifications, and predicted market segments.
+
+The primary engineering focus is the integration of distributed technologies into a unified data processing ecosystem.
+
+## Project Demonstration
+
+### 1. Analytical Dashboard
+
+The analytical dashboard provides an overview of accumulated smartphone predictions and their distribution across different product attributes.
+
+<p align="center">
+  <img src="images/dashboard_phone.png" alt="Smartphone Price Analytics Dashboard" width="100%"/>
+</p>
+
+<p align="center">
+  <img src="images/dashboard_phone-2.png" alt="Detailed Smartphone Analytics Dashboard" width="100%"/>
+</p>
+
+The dashboard includes:
+
+- Total processed smartphone records.
+- Average and maximum predicted prices.
+- Smartphone distribution across brands.
+- Average predicted price by manufacturer.
+- Price comparisons by RAM and storage capacity.
+- SIM configuration distribution.
+- Top 20 highest predicted smartphone prices.
+
+### 2. Real-Time Machine Learning Prediction
+
+The speed layer processes incoming smartphone events and generates predictions immediately using the pretrained XGBoost model.
+
+<p align="center">
+  <img src="images/real-time.gif" alt="Real-Time Smartphone Price Prediction Demonstration" width="100%"/>
+</p>
+
+Each incoming record is processed independently, and the latest prediction is stored in HBase before being displayed through the Flask application.
+
+### 3. Application Execution
+
+The following screenshots demonstrate the application execution environment and prediction interfaces.
+
+<p align="center">
+  <img src="images/run_web_app.png" alt="Running the Real-Time Web Application" width="100%"/>
+</p>
+
+<p align="center">
+  <img src="images/spring_boot_web_app.png" alt="Additional Smartphone Prediction Interface" width="100%"/>
+</p>
+
+---
+
+## System Architecture
+
+The platform follows Lambda Architecture, separating low-latency stream processing from comprehensive batch processing.
+
+```mermaid
+flowchart TB
+    A["Smartphone Dataset<br/>388 Product Records"]
+    B["Python Data Producer"]
+    C["Apache Kafka<br/>smartphoneTopic"]
+
+    A --> B
+    B -->|"Simulated events every 5 seconds"| C
+
+    C --> D["SPEED LAYER"]
+    C --> E["BATCH LAYER"]
+
+    D --> F["Kafka ML Consumer"]
+    F --> G["XGBoost Inference"]
+    G --> H["Apache HBase"]
+    H --> I["Flask Real-Time Application"]
+
+    E --> J["Kafka HDFS Consumer"]
+    J --> K["Hadoop HDFS<br/>Raw Data Storage"]
+    K --> L["Apache Spark / PySpark"]
+    L --> M["Data Cleaning & Transformation"]
+    M --> N["XGBoost Batch Inference"]
+    N --> O["PostgreSQL"]
+    O --> P["Analytical Dashboard"]
+
+    style D fill:#dceeff,stroke:#2775b6,color:#111
+    style E fill:#e4f4e8,stroke:#34834b,color:#111
 ```
-   Access the Apache Airflow web UI (localhost:8080) and run the DAG
-   - Start Apache Spark
 
-   ```batch 
-spark-shell
+### Data Flow
+
+**1. Data Ingestion – Python Producer**
+
+A Python producer reads smartphone records from the source dataset and simulates a continuous incoming data stream by publishing a randomly selected record to Kafka every five seconds.
+
+**2. Event Streaming – Apache Kafka**
+
+Kafka acts as the central messaging platform.
+
+Every incoming smartphone record is published to the `smartphoneTopic` topic. Two independent consumer groups subscribe to the same topic, allowing the speed and batch layers to process every event independently.
+
+**3. Speed Layer – Real-Time Processing**
+
+The streaming consumer:
+
+- Retrieves incoming Kafka messages.
+- Deserializes smartphone records.
+- Prepares the required machine learning features.
+- Loads the pretrained XGBoost model.
+- Predicts the smartphone selling price.
+- Stores the prediction in Apache HBase.
+
+The Flask application retrieves the latest prediction from HBase and displays it through a real-time web interface.
+
+**4. Batch Layer – Distributed Processing**
+
+A separate Kafka consumer captures incoming records and persists them as individual CSV files in Hadoop HDFS.
+
+Every 60 seconds, the batch-processing job:
+
+- Reads accumulated records from HDFS using PySpark.
+- Converts numerical attributes into appropriate data types.
+- Filters records with missing required features.
+- Encodes categorical attributes.
+- Prepares model-compatible feature vectors.
+- Applies the pretrained XGBoost model to generate predictions.
+- Writes the analytical results into PostgreSQL.
+
+**5. Analytical Serving**
+
+PostgreSQL stores the batch prediction results in a structured `Phone` table, which serves as the data source for analytical visualizations.
+
+---
+
+## Technology Stack
+
+| Category | Technology | Purpose |
+|---|---|---|
+| Programming Language | Python 3.10 | Pipeline development |
+| Message Streaming | Apache Kafka | Distributed event ingestion |
+| Kafka Coordination | ZooKeeper | Kafka broker coordination |
+| Stream Processing | Python Kafka Consumers | Real-time event processing |
+| Distributed Storage | Hadoop HDFS 3.2.1 | Raw data storage |
+| Batch Processing | Apache Spark 3.3.4 | Batch transformations |
+| Processing API | PySpark | Spark-based data processing |
+| NoSQL Database | Apache HBase 1.3 | Low-latency prediction storage |
+| Machine Learning | XGBoost 2.x | Smartphone price regression |
+| Data Manipulation | Pandas, NumPy | Feature preparation |
+| Relational Database | PostgreSQL 13 | Batch prediction storage |
+| Database Connectivity | SQLAlchemy, Psycopg2 | Database integration |
+| Web Framework | Flask 3.0.3 | Real-time prediction interface |
+| Visualization | Grafana | Analytical dashboards |
+| Containerization | Docker | Infrastructure packaging |
+| Orchestration | Docker Compose | Multi-container deployment |
+| Development Environment | WSL2 / Ubuntu | Local development |
+
+---
+
+## Dataset & Machine Learning Model
+
+### Dataset
+
+The project uses a smartphone dataset containing **388 product records** with attributes including:
+
+- Brand and model.
+- Screen size.
+- RAM and internal storage.
+- SIM configuration.
+- Battery capacity.
+- Camera specifications.
+- Ratings and reviews.
+- Seller information.
+
+The producer randomly selects records from this dataset to simulate incoming smartphone events.
+
+### XGBoost Regression Model
+
+A pretrained XGBoost regression model predicts smartphone prices using six input features:
+
+| Feature | Description |
+|---|---|
+| Brand | Smartphone manufacturer |
+| Screen Size | Display dimensions |
+| RAM | Available memory |
+| Storage | Internal storage |
+| SIM Type | SIM configuration |
+| Battery | Battery capacity |
+
+**Prediction output:** Estimated smartphone selling price in Moroccan Dirhams (DH).
+
+The same pretrained model is used by both processing layers to maintain consistency in prediction logic.
+
+The model performs inference only; incoming records do not automatically retrain or update the model.
+
+---
+
+## Data Engineering Implementation
+
+### Event-Driven Ingestion
+- Continuous event generation using Python.
+- Kafka-based message publishing.
+- Independent consumer groups.
+- Decoupled ingestion and downstream processing.
+
+### Distributed Storage
+- Hadoop HDFS for raw incoming records.
+- Apache HBase for low-latency prediction retrieval.
+- PostgreSQL for structured analytical results.
+
+### Data Transformation
+- Numerical type conversion.
+- Missing-value filtering.
+- Categorical feature encoding.
+- Machine learning feature preparation.
+- Batch processing of accumulated records.
+
+### Pipeline Orchestration
+- Docker Compose-based infrastructure.
+- Independent application services.
+- Automated batch execution at configurable intervals.
+- Environment-based configuration.
+- Persistent Docker volumes.
+
+---
+
+## Repository Structure
+
+```text
+big-data-lambda-smartphone-prices/
+│
+├── images/
+│   ├── architecture.png
+│   ├── dashboard_phone.png
+│   ├── dashboard_phone-2.png
+│   ├── real-time.gif
+│   ├── run_web_app.png
+│   └── spring_boot_web_app.png
+│
+├── Main/
+│   └── Lambda/
+│       ├── Stream_layer/
+│       │   ├── ML_consumer.py
+│       │   ├── stream_pipeline.py
+│       │   └── insert_data_hbase.py
+│       │
+│       ├── Batch_layer/
+│       │   ├── HDFS_consumer.py
+│       │   ├── batch_pipeline.py
+│       │   ├── batch_layer.py
+│       │   ├── spark_tranformation.py
+│       │   ├── put_data_hdfs.py
+│       │   └── save_data_postgresql.py
+│       │
+│       ├── real_time_web_app(Flask)/
+│       │   ├── app.py
+│       │   └── get_Data_from_hbase.py
+│       │
+│       ├── producer.py
+│       ├── transform.py
+│       ├── config.py
+│       └── batch_loop.py
+│
+├── Dockerfile
+├── docker-compose.yml
+├── hadoop.env
+├── requirements.txt
+├── RUN.md
+├── .gitignore
+└── README.md
 ```
 
-   - Start Apache zookeeper
+*The smartphone dataset, pretrained model, and Flask template are runtime assets and should also be included in the repository or documented separately.*
 
-   ```batch 
-zookeeper-server-start.bat C:/kafka_2.13_2.6.0/config/zookeeper.properties
-```
-   - Start Kafka server
+---
 
-   ```batch 
-kafka-server-start.bat C:/kafka_2.13_2.6.0/config/server.properties
-```
+## Deployment & Execution
 
-  - Run the kafka producer
+### Prerequisites
 
-   ```batch 
-kafka-console-producer.bat --topic smartphoneTopic --bootstrap-server localhost:9092
-```
+- Docker Desktop.
+- Docker Compose.
+- WSL2 with Ubuntu (recommended for Windows users).
+- Git.
 
-  - Run the kafka consumer
+### 1. Clone the Repository
 
-   ```batch 
-kafka-console-consumer.bat --topic smartphoneTopic --from-beginning --bootstrap-server localhost:9092
+```bash
+git clone https://github.com/YOUR_USERNAME/big-data-lambda-smartphone-prices.git
+
+cd big-data-lambda-smartphone-prices
 ```
 
-  - Run HDFS and yarn (start-all or start-dfs and start-yarn)
+### 2. Prepare Runtime Assets
 
-   ```batch 
-start-all  
+Ensure the smartphone CSV dataset, pretrained XGBoost model, and Flask HTML template are available in their expected application paths.
+
+### 3. Build and Start the Infrastructure
+
+```bash
+docker compose up -d --build
 ```
-   - Open power BI file `dashboard.pbix` attached with this project 
 
-after all this run `syc_with_Airflow.py` script.
+### 4. Verify Running Containers
 
+```bash
+docker compose ps
+```
 
-## 7. Dashboards
+### 5. Monitor the Streaming Pipeline
 
-This project utilizes two dashboards to visualize smartphone price predictions and historical data:
+```bash
+docker compose logs -f stream
+```
 
-#### **1. Real-Time Dashboard (Spring Boot Application):**
+### 6. Monitor HDFS Ingestion
 
-- This dashboard is built using a Spring Boot web application.
-- It displays the **predicted price of smartphones in real-time**.
-- Users can access this dashboard through a web interface. 
+```bash
+docker compose logs -f hdfs-ingest
+```
 
+### 7. Monitor Batch Processing
 
-Here is the UI of th Spring Boot web application:
+```bash
+docker compose logs -f batch-loop
+```
 
+### 8. Stop the Infrastructure
 
-![spring_boot_web_ap](images/spring_boot_web_app.png)
+```bash
+docker compose down
+```
 
+To remove persistent Docker volumes as well:
 
-#### **2. Batch Dashboard (Power BI):**
+```bash
+docker compose down -v
+```
 
-- This dashboard leverages Power BI for interactive data exploration.
-- It provides insights into **historical smartphone price trends**.
-- This dashboard is designed for batch users interested in historical analysis.
+---
 
+## Service Endpoints
 
-Here is the  Dashboard created in Power BI:
+| Service | Local Endpoint | Purpose |
+|---|---|---|
+| Flask Application | http://localhost:5000 | Real-time predictions |
+| HDFS NameNode UI | http://localhost:9870 | HDFS monitoring |
+| HBase Master UI | http://localhost:16010 | HBase monitoring |
+| Kafka | localhost:9092 | Event streaming |
+| PostgreSQL | localhost:5433 | Batch prediction database |
+| Grafana | localhost:3000 | Analytical dashboard, when separately configured |
 
-![Phone Dashboard](images/dashboard_phone.png)
+---
 
+## Engineering Considerations & Future Improvements
 
-## 8. Acknowledgments
+| Area | Potential Improvement |
+|---|---|
+| Data Source | Replace simulated events with a live external source |
+| Data Quality | Implement comprehensive validation and quality checks |
+| Kafka | Add schema management and optimized partitioning |
+| Stream Processing | Introduce Spark Structured Streaming |
+| Batch Orchestration | Integrate Apache Airflow |
+| Machine Learning | Add model versioning, monitoring, and automated retraining |
+| Scalability | Deploy Spark on a distributed cluster |
+| Database | Introduce incremental and upsert-based writes |
+| Monitoring | Integrate Grafana and Prometheus |
+| Reliability | Implement retries, dead-letter queues, and idempotency |
+| Data Governance | Add schema enforcement and lineage tracking |
 
-- Special thanks to the open-source communities behind `Python`, `Kafka`, `HDFS` , `Spark`,`Hbase`,`Spring Boot`and `Airflow`
+---
 
-## 9. Conclusion
+## Key Learning Outcomes
 
-- This big data architecture effectively predicts smartphone prices in real-time and provides historical analysis capabilities. The Lambda architecture facilitates efficient stream processing for real-time predictions using XGBoost and HBase, while Apache Airflow orchestrates batch processing with Spark to populate the PostgreSQL data warehouse for historical insights. This solution empowers real-time and batch users with valuable price information, enabling data-driven decision-making.
+This project demonstrates practical implementation of:
 
-you can watch the demo video <a href="https://youtu.be/iClZyC_TZyA" target="_blank">here</a> 
+- Lambda Architecture and distributed data processing.
+- Event-driven ingestion using Apache Kafka.
+- Independent real-time and batch processing pipelines.
+- Distributed storage using Hadoop HDFS.
+- NoSQL integration using Apache HBase.
+- Batch transformations using Apache Spark and PySpark.
+- Machine learning inference within data pipelines.
+- Relational analytical storage using PostgreSQL.
+- Python-based pipeline development.
+- Containerized infrastructure using Docker Compose.
 
-## 10. Contacts
+---
 
-For any inquiries or further information, please contact:
-- **Name:** Aymane Maghouti
-- **Email:** aymanemaghouti16@gmail.com
-- **LinkedIn:** <a href="https://www.linkedin.com/in/aymane-maghouti/" target="_blank">Aymane Maghouti</a><br>
+## Project Objective
+
+The objective of this project is to demonstrate how modern Big Data technologies can be integrated into an end-to-end data engineering platform.
+
+By combining distributed messaging, scalable storage, parallel processing, machine learning inference, and analytical serving, the platform illustrates the engineering principles behind real-time data systems and large-scale analytical pipelines.
+
+<p align="center">
+  <b>Built around data. Powered by distributed processing. Enhanced with machine learning.</b>
+</p>
