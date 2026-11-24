@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - name: Phones DB
+    uid: bdp-pg
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: postgres
+    isDefault: true
+    jsonData:
+      database: bigdata
+      sslmode: disable
+      postgresVersion: 1300
+    secureJsonData:
+      password: postgres

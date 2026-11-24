@@ -1,0 +1,11 @@
+kafka-python==2.0.2
+numpy==1.26.4
+pandas==1.5.3
+scikit-learn
+xgboost>=2.0,<3
+happybase==1.2.0
+hdfs==2.7.3
+pyspark==3.3.4
+sqlalchemy==1.4.52
+psycopg2-binary==2.9.9
+flask==3.0.3

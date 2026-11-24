@@ -1,0 +1,500 @@
+{
+ "uid": "bdp-smartphones",
+ "title": "Smartphone Price Prediction - Batch Layer",
+ "tags": [
+  "big-data",
+  "lambda"
+ ],
+ "timezone": "browser",
+ "schemaVersion": 39,
+ "version": 1,
+ "refresh": "30s",
+ "editable": true,
+ "time": {
+  "from": "now-6h",
+  "to": "now"
+ },
+ "panels": [
+  {
+   "id": 1,
+   "type": "stat",
+   "title": "Phones processed",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 0,
+    "w": 6,
+    "h": 4
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT COUNT(*) AS \"Phones\" FROM \"Phone\""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "none",
+     "color": {
+      "mode": "fixed",
+      "fixedColor": "blue"
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "none",
+    "textMode": "value"
+   }
+  },
+  {
+   "id": 2,
+   "type": "stat",
+   "title": "Average predicted price",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 6,
+    "y": 0,
+    "w": 6,
+    "h": 4
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ROUND(AVG(price)::numeric,0) AS \"Avg price\" FROM \"Phone\""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "none",
+     "color": {
+      "mode": "fixed",
+      "fixedColor": "blue"
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "none",
+    "textMode": "value"
+   }
+  },
+  {
+   "id": 3,
+   "type": "stat",
+   "title": "Highest predicted price",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 0,
+    "w": 6,
+    "h": 4
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ROUND(MAX(price)::numeric,0) AS \"Max price\" FROM \"Phone\""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "none",
+     "color": {
+      "mode": "fixed",
+      "fixedColor": "blue"
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "none",
+    "textMode": "value"
+   }
+  },
+  {
+   "id": 4,
+   "type": "stat",
+   "title": "Distinct brands",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 18,
+    "y": 0,
+    "w": 6,
+    "h": 4
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT COUNT(DISTINCT brand) AS \"Brands\" FROM \"Phone\""
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "none",
+     "color": {
+      "mode": "fixed",
+      "fixedColor": "blue"
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "reduceOptions": {
+     "calcs": [
+      "lastNotNull"
+     ],
+     "fields": "",
+     "values": false
+    },
+    "colorMode": "value",
+    "graphMode": "none",
+    "textMode": "value"
+   }
+  },
+  {
+   "id": 5,
+   "type": "bargauge",
+   "title": "Average predicted price by brand",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 4,
+    "w": 12,
+    "h": 9
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT brand, ROUND(AVG(price)::numeric,0) AS \"Avg price\" FROM \"Phone\" GROUP BY brand ORDER BY 2 DESC"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-BlPu"
+     },
+     "min": 0
+    },
+    "overrides": []
+   },
+   "options": {
+    "orientation": "horizontal",
+    "displayMode": "gradient",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "",
+     "values": true
+    },
+    "showUnfilled": true,
+    "valueMode": "color"
+   }
+  },
+  {
+   "id": 6,
+   "type": "piechart",
+   "title": "Phones by brand",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 12,
+    "y": 4,
+    "w": 12,
+    "h": 9
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT brand, COUNT(*) AS \"Phones\" FROM \"Phone\" GROUP BY brand ORDER BY 2 DESC"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "options": {
+    "pieType": "donut",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "",
+     "values": true
+    },
+    "legend": {
+     "displayMode": "table",
+     "placement": "right",
+     "values": [
+      "value",
+      "percent"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   }
+  },
+  {
+   "id": 7,
+   "type": "bargauge",
+   "title": "Average price by RAM",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 13,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT ram::int::text || ' GB' AS \"RAM\", ROUND(AVG(price)::numeric,0) AS \"Avg price\" FROM \"Phone\" GROUP BY ram ORDER BY ram"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-BlPu"
+     },
+     "min": 0
+    },
+    "overrides": []
+   },
+   "options": {
+    "orientation": "horizontal",
+    "displayMode": "gradient",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "",
+     "values": true
+    },
+    "showUnfilled": true,
+    "valueMode": "color"
+   }
+  },
+  {
+   "id": 8,
+   "type": "bargauge",
+   "title": "Average price by storage",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 8,
+    "y": 13,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT rom::int::text || ' GB' AS \"Storage\", ROUND(AVG(price)::numeric,0) AS \"Avg price\" FROM \"Phone\" GROUP BY rom ORDER BY rom"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "color": {
+      "mode": "continuous-BlPu"
+     },
+     "min": 0
+    },
+    "overrides": []
+   },
+   "options": {
+    "orientation": "horizontal",
+    "displayMode": "gradient",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "",
+     "values": true
+    },
+    "showUnfilled": true,
+    "valueMode": "color"
+   }
+  },
+  {
+   "id": 9,
+   "type": "piechart",
+   "title": "SIM type",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 16,
+    "y": 13,
+    "w": 8,
+    "h": 8
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT sim_type, COUNT(*) AS \"Phones\" FROM \"Phone\" GROUP BY sim_type ORDER BY 2 DESC"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "options": {
+    "pieType": "donut",
+    "reduceOptions": {
+     "calcs": [],
+     "fields": "",
+     "values": true
+    },
+    "legend": {
+     "displayMode": "table",
+     "placement": "right",
+     "values": [
+      "value",
+      "percent"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   }
+  },
+  {
+   "id": 10,
+   "type": "table",
+   "title": "Top 20 most expensive predictions",
+   "datasource": {
+    "type": "postgres",
+    "uid": "bdp-pg"
+   },
+   "gridPos": {
+    "x": 0,
+    "y": 21,
+    "w": 24,
+    "h": 10
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "postgres",
+      "uid": "bdp-pg"
+     },
+     "format": "table",
+     "rawQuery": true,
+     "editorMode": "code",
+     "rawSql": "SELECT model_name AS \"Model\", brand AS \"Brand\", ram::int AS \"RAM (GB)\", rom::int AS \"Storage (GB)\", battary::int AS \"Battery (mAh)\", ROUND(price::numeric,0) AS \"Predicted price\" FROM \"Phone\" ORDER BY price DESC LIMIT 20"
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "options": {
+    "showHeader": true
+   }
+  }
+ ]
+}
